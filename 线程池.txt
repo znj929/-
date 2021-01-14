@@ -1,0 +1,255 @@
+1，线程池的底层基本工作原理？
+
+ExecutorService threadPool = Executors.newFixedThreadPool(3) -> 3: corePoolSize
+threadPool.submit(new Callable() {
+
+       public void run() {}
+
+});
+
+提交任务，先看一下线程池里的线程数量是否小于corePoolSize核心线程数，也就是3，如果小于，直接创建一个线程出来执行你的任务.
+如果执行完你的任务之后，这个线程是不会死掉的，他会尝试从一个无界的LinkedBlockingQueue里获取新的任务，
+如果没有新的任务，此时就会阻塞住，等待新的任务到来.
+
+总结：线程池刚创建时是没有线程的，并且里面包含了一个任务队列。当有任务过来时，会去判断线程池中的线程数量是否小于corePoolSize，
+如果是，就去创建一个线程去执行这个任务，任务执行完成以后，这个线程就会阻塞在任务队列，继续等待下一个任务；
+如果线程池中的线程数量已经等于corePoolSize时，就将当前任务放入任务队列，阻塞在任务队列的线程就会去执行这个任务。
+
+2，说说线程池的核心配置？
+newThreadPoolExecutor(3);
+
+public ThreadPoolExecutor(int corePoolSize,
+						  int maximumPoolSize,
+						  long keepAliveTime,
+						  TimeUnit unit,
+						  BlockingQueue<Runnable> workQueue) {
+						  
+	this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
+		 Executors.defaultThreadFactory(), defaultHandler);
+}
+
+参数解释：
+corePoolSize –保留在池中的线​​程数，即使它们处于空闲状态，除非设置了allowCoreThreadTimeOut
+maximumPoolSize –池中允许的最大线程数
+keepAliveTime –当线程数大于内核数时，这是多余的空闲线程将在终止之前等待新任务的最长时间。
+unit – keepAliveTime参数的时间单位
+workQueue –在执行任务之前用于保留任务的队列。此队列将仅保存execute方法提交的Runnable任务。
+
+
+
+
+如果说你把queue做成有界队列，比如说new ArrayBlockingQueue<Runnable>(200)，那么假设corePoolSize个线程都在繁忙的工作，大量任务进入有界队列，队列满了，此时怎么办？
+这个时候假设你的maximumPoolSize是比corePoolSize大的，此时会继续创建额外的线程放入线程池里，来处理这些任务，然后超过corePoolSize数量的线程如果处理完了一个任务也会尝试从队列里去获取任务来执行
+如果额外线程都创建完了去处理任务，队列还是满的，此时还有新的任务来怎么办？
+public ThreadPoolExecutor(int corePoolSize,
+						  int maximumPoolSize,
+						  long keepAliveTime,
+						  TimeUnit unit,
+						  BlockingQueue<Runnable> workQueue,
+						  RejectedExecutionHandler handler) {
+	this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
+		 Executors.defaultThreadFactory(), handler);
+}
+参数解释：
+handler –因达到线程界限和队列容量而被阻止执行时使用的处理程序
+
+只能reject掉，他有几种reject策略，可以传入 RejectedExecutionHandler
+
+(1)AbortPolicy  中止
+(2)DiscardPolicy  放弃
+(3)DiscardOldestPolicy 舍弃最旧的政策
+(4)CallerRunsPolicy  
+(5)自定义
+如果后续慢慢的队列里没任务了，线程空闲了，超过corePoolSize的线程会自动释放掉，在keepAliveTime之后就会释放
+
+
+
+3，线程中使用无界阻塞队列会发生什么问题？
+
+面试题：
+
+在远程服务异常的情况下，使用无界阻塞队列，是否会导致内存异常飙升？
+
+调用超时，队列变得越来越大，此时会导致内存飙升起来，而且还可能会导致你会OOM，内存溢出
+
+4，如果线程池的队列满了之后，会发生什么事情吗？
+
+使用界队列，可以避免内存溢出
+
+corePoolSize: 10
+
+maximumPoolSize : 200
+
+ArrayBlockingQueue(200)
+
+但是如果队列任务太多，线程池无法执行更多的任务了，可以自定义一个reject策略，此时建议你可以把这个任务信息持久化写入磁盘里去，后台专门启动一个线程，
+后续等待你的线程池的工作负载降低了，他可以慢慢的从磁盘里读取之前持久化的任务，重新提交到线程池里去执行。
+你可以无限制的不停的创建额外的线程出来，一台机器上，有几千个线程，甚至是几万个线程，每个线程都有自己的栈内存，占用一定的内存资源，会导致内存资源耗尽，系统也会崩溃掉
+即使内存没有崩溃，会导致你的机器的cpu load，负载，特别的高
+
+
+5，如果线上机器突然宕机，线程池的阻塞队列中的请求怎么办？
+必然会导致队列中的请求丢失的。
+我们可以在数据库维护这么一个任务信息，在提交任务到线程池中之前，先在数据库中插入这条任务信息，更新任务状态，未提交，提交成功，完成 等。发生宕机重启后，可以扫描这个任务表去重新执行任务。
+怎么避免在更新任务状态的时候宕机，重启后重复执行任务呢？ 可以从接口的幂等性，事物方面考虑 要么都成功,要么都失败,任务提交成功后等待状态修改的结果,如果状态修改失败,则撤销此次任务，保证最终一致性就好了。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
