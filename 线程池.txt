@@ -29,7 +29,7 @@ public ThreadPoolExecutor(int corePoolSize,
 }
 
 参数解释：
-corePoolSize –保留在池中的线​​程数，即使它们处于空闲状态，除非设置了allowCoreThreadTimeOut
+corePoolSize –保留在池中的线程数，即使它们处于空闲状态，除非设置了allowCoreThreadTimeOut
 maximumPoolSize –池中允许的最大线程数
 keepAliveTime –当线程数大于内核数时，这是多余的空闲线程将在终止之前等待新任务的最长时间。
 unit – keepAliveTime参数的时间单位
