@@ -96,6 +96,144 @@ Spring容器中的bean可以分为5个范围：
 
 7. PROPAGATION_NESTED：如果当前存在事务，则在嵌套事务内执行。如果当前没有事务，则按REQUIRED属性执行。
 
+### 说说Spring 的核心架构？
+
+spring核心点主要是IOC和AOP，核心技术分别是反射与代理。
+
+spring 整个生命周期：创建-》使用-》销毁
+
+1. 首先实例化一个Bean
+2. 设置对象属性（依赖注入）
+3. 实现Aware接口：
+   如果这个Bean已经实现了ApplicationContextAware接口，spring容器就会调用我们的bean的setApplicationContext(ApplicationContext)方法，传入Spring上下文，把spring容器给传递给这个bean
+4. 如果实现BeanPostProcessor接口可以在bean完成创建的前后去做一些自定义操作，会调用 postProcessBeforeInitialization(Object obj, String s)方法。
+5. 配置init-method会调用对应的函数,如果Bean在Spring配置文件中配置了 init-method 属性，则会自动调用其配置的初始化方法。
+6. 如果这个Bean实现了BeanPostProcessor接口，将会调用postProcessAfterInitialization(Object obj, String s)方法
+7. DisposableBean：当Bean不再需要时，会经过清理阶段，如果Bean实现了DisposableBean这个接口，会调用其实现的 destroy()方法；
+8. destroy-method： 最后，如果这个Bean的Spring配置中配置了destroy-method属性，会自动调用其配置的销毁方法。
+
+### 说说Spring中都使用了哪些设计模式
+
+工厂，单例，代理
+
+工厂模式:
+spring核心本身就是一个大的工厂，把所有的Bean都放入在整个spring工厂里面。
+````
+
+public class AServiceFactory{
+    private static AService getAService(){
+        new AServiceImpl();
+    }
+}
+public class AController{
+    private AService aService= AServiceFactory.getAService();
+}
+````
+
+单例模式:
+spring bean默认就是单例的，确保每一个类在运行期间只有一个实例对象。
+``` 代码块
+public class AService{
+    private Static volatile AService aService;
+    
+    public AService getInstance(){
+        if(aService == null ){
+            synchronized(AService.class){
+                if(aService == null ){
+                    return new AService();
+                }
+            }
+        }
+        return aService;
+    }
+}
+``` 
+代理:
+需要对一个类的方法做一些增强处理，切入方法，创建一些动态代理对象，对目标对象访问，会先经过代理对象，通过代理对象调用目标对象。
+
+### 说说Spring Web MVC的核心架构
+
+“https://www.processon.com/view/link/600595bde401fd261bc9ce44“
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
