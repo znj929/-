@@ -23,7 +23,7 @@ java虚拟机会对写好的代码进行指令重排，在多线程情况就可�
 可以看下这段代码
 
 ``` 代码块
-public class VolatileT extends Thread {
+public class volatile示例.VolatileT extends Thread {
     int a = 0;
     boolean flag = false;
 
@@ -34,7 +34,7 @@ public class VolatileT extends Thread {
         }
     }
     public static void main(String[] args) throws InterruptedException {
-        VolatileT volatileT = new VolatileT();
+        volatile示例.VolatileT volatileT = new volatile示例.VolatileT();
         volatileT.start();
         Thread.sleep(2000);
         volatileT.flag = true;

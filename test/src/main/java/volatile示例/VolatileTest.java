@@ -1,3 +1,5 @@
+package volatile示例;
+
 public class VolatileTest extends Thread {
 
     volatile boolean flag = false;

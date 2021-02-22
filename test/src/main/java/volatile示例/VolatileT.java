@@ -1,7 +1,13 @@
+package volatile示例;
+
+/**
+ * @author znj
+ */
 public class VolatileT extends Thread {
     boolean flag = false;
     int a = 0;
 
+    @Override
     public void run(){
         while (!flag) {
             a++;
