@@ -3,6 +3,32 @@
 
 数组+链表 红黑树
 
+#### 为什么要转红黑树？
+
+当链表长度超过阈值（8）时，将链表转换为红黑树,
+链表查找元素的时间复杂度为 O(n)，远远大于红黑树的 O(logn)，尤其是在节点越来越多的情况下，O(logn) 体现出的优势会更加明显；简而言之就是为了提升查询的效率。
+
+#### 为什么不一开始就用红黑树？
+````
+JDK 的源码注释中已经对这个问题作了解释：
+单个 TreeNode 需要占用的空间大约是普通 Node 的两倍，所以只有当包含足够多的 Nodes 时才会转成 TreeNodes，而是否足够多就是由 TREEIFY_THRESHOLD 的值（默认值8）决定的。
+而当桶中节点数由于移除或者 resize 变少后，又会变回普通的链表的形式，以便节省空间，这个阈值是 UNTREEIFY_THRESHOLD（默认值6）。
+
+
+````
+#### 转换阈值 8 是怎么来的？
+````
+在源码中也对选择 8 这个数字做了说明:
+
+链表长度超过 8 就转为红黑树的设计，更多的是为了防止用户自己实现了不好的哈希算法时导致链表过长，从而导致查询效率低，而此时转为红黑树更多的是一种保底策略，用来保证极端情况下查询的效率。
+
+如果 hashCode 分布良好，也就是 hash 计算的结果离散好的话，那么红黑树这种形式是很少会被用到的，因为各个值都均匀分布，很少出现链表很长的情况。在理想情况下，链表长度符合泊松分布，
+各个长度的命中概率依次递减，当长度为 8 的时候，概率仅为 0.00000006。这是一个小于千万分之一的概率，通常我们的 Map 里面是不会存储这么多的数据的，
+所以通常情况下，并不会发生从链表向红黑树的转换。
+
+````
+
+
 #### JDK 1.8中对hash算法和寻址算法是如何优化的？
 
 hash算法
@@ -48,28 +74,10 @@ hash冲突问题，链表+红黑树，O(n)和O(logn)
 #### HashMap如何解决散列碰撞（必问）？
 
 
+学习相关资料：
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+https://blog.csdn.net/weixin_34254823/article/details/94558911?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.control&dist_request_id=e6fd92ca-31c8-4dd3-b6d6-72987bf58a8d&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.control
+https://blog.csdn.net/xiewenfeng520/article/details/107119970
 
 
 
