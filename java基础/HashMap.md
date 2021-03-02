@@ -3,6 +3,15 @@
 
 数组+链表 红黑树
 
+#### HashMap的put()和get()的实现
+
+````
+
+````
+
+
+
+
 #### 为什么要转红黑树？
 
 当链表长度超过阈值（8）时，将链表转换为红黑树,
@@ -65,11 +74,27 @@ hash冲突问题，链表+红黑树，O(n)和O(logn)
 
 #### HashMap是如何进行扩容的？
 
-底层是一个数组，当这个数组满了，会自动扩容进行2倍的扩容。
+底层是一个数组，当这个数组到达扩容阈值，会自动扩容进行扩容。
+注意：
+阈值(threshold) = 负载因子(loadFactor) x 容量(capacity) 
+当HashMap中table数组(也称为桶)长度 >= 阈值(threshold) 就会自动进行扩容。
+
+扩容的规则是这样的，因为table数组长度必须是2的次方数，扩容其实每次都是按照上一次tableSize位运算得到的就是做一次左移1位运算，
+假设当前tableSize是16的话 16转为二进制再向左移一位就得到了32 即 16 << 1 == 32 即扩容后的容量，也就是说扩容后的容量是当前
+容量的两倍，但记住HashMap的扩容是采用当前容量向左位移一位（newtableSize = tableSize << 1），得到的扩容后容量，而不是当前容量x2
+
+
+#### 为什么计算扩容后容量要采用位移运算呢，怎么不直接乘以2呢？
+因为cpu毕竟它不支持乘法运算，所有的乘法运算它最终都是再指令层面转化为了加法实现的，这样效率很低，如果用位运算的话对cpu来说就非常的简洁高效。
 
 负载因子：
 给定的默认容量为 16，负载因子为 0.75。Map 在使用过程中不断的往里面存放数据，当数量达到了 16 * 0.75 = 12 就需要将当前 16 的容量进行扩容，而扩容这个过程涉及到 rehash、复制数据等操作，所以非常消耗性能。
 因此通常建议能提前预估 HashMap 的大小最好，尽量的减少扩容带来的性能损耗。
+
+#### 为什么HashMap的默认负载因子是0.75，而不是0.5或者是整数1呢？
+阈值(threshold) = 负载因子(loadFactor) x 容量(capacity) 
+根据HashMap的扩容机制，他会保证容量(capacity)的值永远都是2的幂 为了保证负载因子x容量的结果是一个整数，这个值是0.75(4/3)比较合理，因为这个数和任何2的次幂乘积结果都是整数。
+
 
 #### HashMap如何解决散列碰撞（必问）？
 
@@ -80,7 +105,7 @@ https://blog.csdn.net/weixin_34254823/article/details/94558911?utm_medium=distri
 https://blog.csdn.net/xiewenfeng520/article/details/107119970
 
 
-
+https://blog.csdn.net/qq_41097354/article/details/90515802?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-2.control&dist_request_id=1328575.12942.16146763705021871&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-2.control
 
 
 
