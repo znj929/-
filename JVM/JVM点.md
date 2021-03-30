@@ -37,6 +37,48 @@ https://www.processon.com/view/link/6060811e5653bb2225f580ec
 2. 其次加载这个类的Classloader已经被回收
 3. 最后该类的Class对象没有任何引用
 
+#### JVM内存核心参数
+1. -Xms:java堆内存大小
+2. -Xmx:java堆内存的最大大小
+3. -Xmn:java堆内存中新生代大小，扣除新生代剩下的就是老年代的内存大小
+4. -XX:PermSize:永久代大小 1.8替换成了 -XX:MetaspaceSize
+5. -XX:MaxPermSize:永久代最大大小 1.8替换成了 -XX:MaxMetaspaceSize
+6. -Xss:每个线程的栈内存大小 每个线程都要自己的虚拟机栈
+
+#### 强引用 软引用 弱引用
+
+1. 强引用：垃圾回收不会回收这个对象
+   如：
+````
+public class test{
+    public static A a = new A();
+}
+````
+
+2. 软引用：垃圾回收后发现内存空间还是不够，就会回收这个软引用对象。
+   如：
+   
+````
+public class test{
+    public static SoftReference<A> a1 = new SoftReference<>(new A());
+}
+````
+3. 弱引用： 只要发生垃圾回收，就会把这个对象回收掉。
+    如：
+````
+public class test{
+    /**
+     * 弱引用
+     */
+    public static WeakReference<A> a2 = new WeakReference<>(new A());
+}
+````
+
+#### JVM垃圾回收算法
+
+https://www.processon.com/view/link/606344177d9c0805fd376530
+
+
 
 
 
