@@ -38,12 +38,22 @@ https://www.processon.com/view/link/6060811e5653bb2225f580ec
 3. 最后该类的Class对象没有任何引用
 
 #### JVM内存核心参数
-1. -Xms:java堆内存大小
-2. -Xmx:java堆内存的最大大小
-3. -Xmn:java堆内存中新生代大小，扣除新生代剩下的就是老年代的内存大小
-4. -XX:PermSize:永久代大小 1.8替换成了 -XX:MetaspaceSize
-5. -XX:MaxPermSize:永久代最大大小 1.8替换成了 -XX:MaxMetaspaceSize
-6. -Xss:每个线程的栈内存大小 每个线程都要自己的虚拟机栈
+1. -Xms: java堆内存大小
+2. -Xmx: java堆内存的最大大小
+3. -Xmn: java堆内存中新生代大小，扣除新生代剩下的就是老年代的内存大小
+4. -XX:PermSize: 永久代大小 1.8替换成了 -XX:MetaspaceSize
+5. -XX:MaxPermSize: 永久代最大大小 1.8替换成了 -XX:MaxMetaspaceSize
+6. -Xss: 每个线程的栈内存大小 每个线程都要自己的虚拟机栈
+7. -XX:HandlePromotionFailure: 空间担保，
+8. -XX:SurvivorRatio: 用来设置新生代中Eden区和两个Survivor区的比例,默认值为8,代表着Eden区比例占新生代的80%，两个Survivor区各占10%。
+9. -XX:MaxTenuringThreshold=10 ：代表发生了10次Minor GC留下来的对象放入老年代。
+10. -XX:PretenureSizeThreshold=1M：代表超过1M大小的对象直接进入老年代。
+11. -XX:+UseParNewGC ：设置年轻代垃圾回收算法使用 ParNew 复制算法
+12. -XX:ParallelGCThreads ：可以调节ParNew的垃圾回收线程数量，默认会根据计算机CPU数量来决定。如4核CPU 默认就是4个线程数量。
+13. -XX:+UseConcMarkSweepGC：设置老年代回收算法。CMS 标记清理算法
+14. -XX:CMSInitiatingOccupancyFaction=92 :设置老年代空间使用率超过百分之92，自动触发Full GC.
+15. -XX:CMSFullGCsBeforeCompaction=0 :默认是0，设置老年代 多少次Full GC 后需要进行垃圾碎片整理。
+
 
 #### 强引用 软引用 弱引用
 
@@ -143,15 +153,10 @@ https://www.processon.com/view/link/6071afec079129117f22f9db
     
     ````
 
+#### 如何设计系统的 JVM参数
+详细讲解了什么时候使用 #### JVM内存核心参数
 
-
-
-
-
-
-
-
-
+https://www.processon.com/view/link/6075a4741e08534f371bf0a0
 
 
 
