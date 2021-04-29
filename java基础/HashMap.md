@@ -69,9 +69,6 @@ hash冲突问题，链表+红黑树，O(n)和O(logn)
 会在冲突的位置形成一个链表结构，get的时候就需要遍历这个链表，当链表达到一定长度后遍历就比较慢时间复杂度O(n)，
 达到一定长度后就会转为红黑树的结构，遍历一颗红黑树找一个元素时间复杂度O(logn)。性能会比链表高一些。
 
-
-
-
 #### HashMap是如何进行扩容的？
 
 底层是一个数组，当这个数组到达扩容阈值，会自动扩容进行扩容。
@@ -95,9 +92,9 @@ hash冲突问题，链表+红黑树，O(n)和O(logn)
 阈值(threshold) = 负载因子(loadFactor) x 容量(capacity) 
 根据HashMap的扩容机制，他会保证容量(capacity)的值永远都是2的幂 为了保证负载因子x容量的结果是一个整数，这个值是0.75(4/3)比较合理，因为这个数和任何2的次幂乘积结果都是整数。
 
-
+    
 #### HashMap如何解决散列碰撞（必问）？
-
+拉链法
 
 学习相关资料：
 
@@ -108,7 +105,12 @@ https://blog.csdn.net/xiewenfeng520/article/details/107119970
 https://blog.csdn.net/qq_41097354/article/details/90515802?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-2.control&dist_request_id=1328575.12942.16146763705021871&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-2.control
 
 
+#### 为什么不使用二叉查找树，而是使用红黑树？
+二叉查找树很可能会造成一条线性结构，就会变成和链表一样的结构了，遍历查找就会非常慢。
+而红黑树在插入新数据后可能需要通过左旋，右旋、变色这些操作来保持平衡，引入红黑树就是为了查找数据快，解决链表查询深度的问题，
+我们知道红黑树属于平衡二叉树，但是为了保持“平衡”是需要付出代价的，但是该代价所损耗的资源要比遍历线性链表要少，所以当长度大于8的时候，会使用红黑树，如果链表长度很短的话，根本不需要引入红黑树，引入反而会慢。
 
+https://blog.csdn.net/weixin_39819661/article/details/111249224
 
 
 
