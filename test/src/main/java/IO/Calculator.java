@@ -14,4 +14,14 @@ public class Calculator {
     public static Object cal(String expression) throws ScriptException {
         return ise.eval(expression);
     }
+
+    public static void main(String[] args) {
+        try{
+            Object cal = Calculator.cal("200/0.95");
+            System.out.println(cal);
+        }catch (Exception e){
+
+        }
+    }
+
 }
