@@ -159,6 +159,20 @@ https://www.processon.com/view/link/6071afec079129117f22f9db
 https://www.processon.com/view/link/6075a4741e08534f371bf0a0
 
 
+#### 什么时候会触发 Young GC ？什么时候会触发 Old GC ？
+````
+1. 什么时候会触发 Young GC ：
+    一般在新生代的 Eden 区域满了之后就会触发，采用标记复制算法来回收新生代的垃圾。
+2. 什么时候会触发 Old GC :
+    2.1：发生 Young GC 之前进行检查，如果“老年代可用的连续内存空间”<"新生代历次Young GC后升入老年代的对象总和的平均大小"，
+        说明本次Young GC 后升入老年代的对象大小很可能会超过当前老年代当前可用的内存空间。
+    2.2：执行Young GC 之后有一批对象需要放入老年代，此时老年代就是没有足够的内存空间存放这些对象，此时必须立刻触发一次 Old GC。
+    2.3：我们可以通过参数 -XX:CMSInitiatingOccupancyFaction=92 :设置老年代空间使用率超过百分之92，自动触发Full GC.不过整个比例可以根据实际情况来调整。
+    
+````
+
+
+
 
 
 
